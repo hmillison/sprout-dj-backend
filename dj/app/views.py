@@ -39,7 +39,7 @@ def song(request, playlist_id, song_id=None):
     if request.method == 'GET':
         form = SongForm(request.GET)
         if form.is_valid():
-            song = Song.objects.get(pk=form.cleaned_data['id'])
+            song = _get_song_or_404(form.cleaned_data['id'])
             j = _serialize_obj(song)
             return HttpResponse(j)
     return Http404("add_song failed")
