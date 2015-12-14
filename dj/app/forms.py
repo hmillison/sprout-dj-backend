@@ -3,8 +3,8 @@ from django import forms
 
 class SongForm(forms.Form):
     id = forms.IntegerField(required=False)
-    account_id = forms.IntegerField(required=True)
-    url = forms.CharField(required=True)
+    account_id = forms.IntegerField(required=False)
+    url = forms.CharField(required=False)
     time_played = forms.IntegerField(required=False)
     duration = forms.IntegerField(required=False)
     got_noped = forms.IntegerField(required=False)
