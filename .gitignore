@@ -1,0 +1,16 @@
+syntax: glob
+
+.DS_Store
+target/*
+bin/*
+*.log
+*.orig
+*.rej
+*.pyc
+dependency-reduced-pom.xml
+.idea*
+out/*
+logs/
+*.iml
+scripts/*.sql
+prod_schema.sql
