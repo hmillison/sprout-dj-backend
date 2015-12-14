@@ -146,7 +146,7 @@ class Playlist(models.Model):
 class Song(models.Model):
     url = models.TextField(blank=True, null=True)
     account_id = models.IntegerField(blank=True, null=True)
-    date_added = models.DateTimeField(blank=True, null=True)
+    date_added = models.DateTimeField(blank=True, null=False)
     playlist_id = models.IntegerField(blank=True, null=True)
     played_on = models.DateTimeField(blank=True, null=True)
     got_noped = models.IntegerField(blank=True, null=True)
