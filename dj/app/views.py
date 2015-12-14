@@ -7,7 +7,7 @@ from forms import AccountForm
 from models import Song
 
 def index(request):
-    return HttpResponse("Hello, world. You're at the dj index.")
+    return HttpResponse("Hello, world. BLAH You're at the dj index.")
 
 
 # SONGS
