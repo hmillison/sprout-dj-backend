@@ -23,9 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'vejeb8ey4vxjfua=ozs7k%t1n1=5-@%0e=^u7*k))&73_86bsl'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -74,17 +74,7 @@ WSGI_APPLICATION = 'dj.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'dj',
-#         'USER': '',
-#         'PASSWORD': '',
-#         'HOST': '198.61.190.195',
-#         'PORT': '111'
-#     }
-# }
-
+import seceret
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
