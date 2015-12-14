@@ -11,7 +11,8 @@ def index(request):
 
 
 # SONGS
-def add_song(request, list_id):
+def song(request, list_id):
+    # new song
     if request.method == 'POST':
         form = SongForm(request.POST)
         if form.is_valid():
@@ -20,6 +21,11 @@ def add_song(request, list_id):
                      playlist_id=list_id)
             s.save()
             return HttpResponse("add_song data {0} for list {1} id {2}".format(form.cleaned_data, list_id, s.pk))
+    # update song
+    if request.method == 'PUT':
+        form = SongForm(request.POST)
+        if form.is_valid():
+            return HttpResponse("update_song data {0} for list {1}".format(form.cleaned_data, list_id))
     return Http404("add_song failed")
 
 
@@ -31,14 +37,6 @@ def vote(request, list_id):
     return Http404("must use post")
 
 
-def update_song(request, list_id):
-    if request.method == 'POST':
-        form = SongForm(request.POST)
-        if form.is_valid():
-            return HttpResponse("update_song data {0} for list {1}".format(form.cleaned_data, list_id))
-    return Http404("update_song failed")
-
-
 # PLAYLIST
 def new_playlist(request):
     if request.method == 'POST':
@@ -48,7 +46,8 @@ def new_playlist(request):
     return Http404("failed new_playlist")
 
 
-def update_playlist(request, list_id):
+def playlist(request, list_id):
+        # update playlist
         if request.method == 'POST':
             form = PlaylistForm(request.POST)
             if form.is_valid():
@@ -65,7 +64,7 @@ def new_account(request):
     return Http404("failed new account")
 
 
-def update_account(request, account_id):
+def account(request, account_id):
     if request.method == 'POST':
         form = AccountForm(request.POST)
         if form.is_valid():
