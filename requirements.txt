@@ -40,3 +40,4 @@ kazoo==1.3.1
 httplib2==0.9 # fixes ssl certificate error for kyle's pylinkedin fork
 # -e hg+ssh://hg@bitbucket.org/sproutsocial/splinter/@0.1.4#egg=splinter
 django-log-request-id==1.0.0
+soundcloud==0.5.0
