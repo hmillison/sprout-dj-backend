@@ -4,9 +4,9 @@ from django import forms
 class SongForm(forms.Form):
     id = forms.IntegerField(required=False)
     account_id = forms.IntegerField(required=True)
-    link = forms.CharField(required=True)
+    url = forms.CharField(required=True)
     time_played = forms.IntegerField(required=False)
-    durration = forms.IntegerField(required=False)
+    duration = forms.IntegerField(required=False)
     got_noped = forms.IntegerField(required=False)
     time_passed = forms.IntegerField(required=False)
     is_this_john = forms.BooleanField(required=False)

@@ -48,7 +48,7 @@ class Playlist(models.Model):
 class Song(models.Model):
     id = models.IntegerField(primary_key=True)
     url = models.TextField(blank=True, null=True)
-    added_by = models.IntegerField(blank=True, null=True)
+    account_id = models.IntegerField(blank=True, null=True)
     date_added = models.DateTimeField(blank=True, null=True)
     playlist_id = models.IntegerField(blank=True, null=True)
     played_on = models.DateTimeField(blank=True, null=True)

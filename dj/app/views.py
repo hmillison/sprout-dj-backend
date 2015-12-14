@@ -4,7 +4,7 @@ from forms import SongForm
 from forms import PlaylistForm
 from forms import VoteForm
 from forms import AccountForm
-
+from models import Song
 
 def index(request):
     return HttpResponse("Hello, world. You're at the dj index.")
@@ -15,7 +15,11 @@ def add_song(request, list_id):
     if request.method == 'POST':
         form = SongForm(request.POST)
         if form.is_valid():
-            return HttpResponse("add_song data {0} for list {1}".format(form.cleaned_data, list_id))
+            s = Song(url=form.cleaned_data['url'],
+                     account_id=form.cleaned_data['account_id'],
+                     playlist_id=list_id)
+            s.save()
+            return HttpResponse("add_song data {0} for list {1} id {2}".format(form.cleaned_data, list_id, s.pk))
     return Http404("add_song failed")
 
 

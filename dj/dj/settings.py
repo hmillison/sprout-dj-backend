@@ -74,7 +74,7 @@ WSGI_APPLICATION = 'dj.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
-import seceret
+from secret import DATABASES
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
