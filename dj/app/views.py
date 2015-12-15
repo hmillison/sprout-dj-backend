@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.http import Http404
+from django.http import HttpResponseBadRequest
 from forms import SongForm
 from forms import PlaylistForm
 from forms import VoteForm
@@ -130,7 +131,7 @@ def song(request, playlist_id):
 
                 return HttpResponse(_serialize_obj(s))
             else:
-                return HttpResponse("This is on the playlist already, stupid.")
+                return HttpResponseBadRequest("This is on the playlist already, stupid.")
     # update song
     if request.method == 'PUT':
         form = SongForm(request.PUT)
@@ -173,15 +174,15 @@ def vote(request, playlist_id):
 
             #if so, check if on
             if len(f) > 1:
-                return HttpResponse("You done fucked up somehow.")
+                return HttpResponseBadRequest("You done fucked up somehow.")
             elif len(f) == 1:
                 if f[0]['type'] <> type or f[0]['on'] <> on:
                     v.update(on=on,type=type)
                     j = _serialize_obj(v[0])
                 elif f[0]['on'] == 1 and on==1:
-                    return HttpResponse("You already voted on this track, jerk.")
+                    return HttpResponseBadRequest("You already voted on this track, jerk.")
                 elif f[0]['on'] == 0 and on==0:
-                    return HttpResponse("You already unvoted this track, jerk.")
+                    return HttpResponseBadRequest("You already unvoted this track, jerk.")
             else:
                 #if not exists add
                 v = Vote(type=type,
@@ -206,7 +207,7 @@ def vote(request, playlist_id):
 
 # PLAYLIST
 def playlist(request):
-        # update playlist
+        # add playlist
         if request.method == 'POST':
             form = PlaylistForm(request.POST)
             if form.is_valid():
@@ -215,6 +216,7 @@ def playlist(request):
                              date_added=datetime.utcnow())
                 p.save()
                 return HttpResponse(_serialize_obj(p))
+        # update playlist
         # view playlist
         if request.method == 'GET':
             form = PlaylistForm(request.GET)
@@ -223,6 +225,21 @@ def playlist(request):
                 j = _serialize_obj(current_list)
                 return HttpResponse(j)
         return Http404("failed update playlist")
+
+
+def playlist_update(request):
+    if request.method == 'POST':
+        form = PlaylistForm(request.POST)
+        if form.is_valid():
+            current_list = _get_playlist_or_404(form.cleaned_data['id'])
+            if not form.cleaned_data.get('now_playing'):
+                return HttpResponseBadRequest("cannot update playist without song")
+            song = _get_song_or_404(form.cleaned_data['now_playing'])
+            if song.playlist_id != current_list.id:
+                return HttpResponseBadRequest("this song is not for the current playlist")
+            current_list.now_playing = song.id
+            current_list.save()
+            return HttpResponse(_serialize_obj(current_list))
 
 
 # ACCOUNT

@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^(?P<playlist_id>[0-9]+)/vote/$', views.vote),
     # playlist
     url(r'^playlist/$', views.playlist),
+    url(r'^playlist/update/$', views.playlist_update),
     # account
     url(r'^account/$', views.account),
 ]
