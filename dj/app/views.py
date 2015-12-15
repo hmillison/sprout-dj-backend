@@ -40,6 +40,18 @@ def song(request, playlist_id):
             #check if it's a valid soundcloud or youtube url
             parsedurl = urlparse(form.cleaned_data['url'])
 
+            if 'account_id' not in form.cleaned_data or form.cleaned_data['account_id'] in (None, ''):
+                return HttpResponse("Please use a valid account.")
+            else:
+                #check for account
+                a = Account.objects.filter(id=form.cleaned_data['account_id']).count()
+
+                if a == 1:
+                    account_id = form.cleaned_data['account_id']
+                else:
+                    return HttpResponse("Please use a valid account.")
+
+
             #for youtube links
             if 'youtu' in parsedurl.netloc:
                 qs=parse_qs(parsedurl.query)
@@ -117,7 +129,7 @@ def song(request, playlist_id):
             if f == 0:
                 date_added=datetime.utcnow()
                 s = Song(url=url,
-                         account_id=form.cleaned_data['account_id'],
+                         account_id=account_id,
                          playlist_id=playlist_id,
                          artist=artist,
                          title=title,
@@ -181,11 +193,14 @@ def vote(request, playlist_id):
                 elif f[0]['on'] == 0 and on==0:
                     return HttpResponse("You already unvoted this track, jerk.")
             else:
+                date_added=datetime.utcnow()
                 #if not exists add
                 v = Vote(type=type,
                          account_id=account_id,
                          on=on,
-                         song_id=song_id)
+                         song_id=song_id,
+                         date_added=date_added
+                         )
                 v.save()
                 j = _serialize_obj(v)
 
