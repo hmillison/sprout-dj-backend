@@ -7,7 +7,7 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     #songs
     url(r'^(?P<playlist_id>[0-9]+)/song/$', views.song),
-    url(r'^(?P<playlist_id>[0-9]+)/song/(?P<song_id>[0-9]+)$', views.song),
+    url(r'^(?P<playlist_id>[0-9]+)/song/all/$', views.all_songs),
     url(r'^(?P<playlist_id>[0-9]+)/vote/$', views.vote),
     # playlist
     url(r'^(?P<playlist_id>[0-9]+)/playlist/$', views.playlist),

@@ -8,15 +8,20 @@ from models import Account
 from models import Song
 from models import Vote
 from models import Playlist
+from django.db.models import F
 from helpers import _get_account_or_404
 from helpers import _get_playlist_or_404
 from helpers import _get_song_or_404
 from helpers import _get_vote_or_404
 from helpers import _serialize_obj
-from urlparse import urlparse,parse_qs
+from helpers import _serialize_all_obj
+from helpers import _format_song
+from urlparse import urlparse
+from urlparse import parse_qs
 import soundcloud
 import urllib
 import requests
+import json
 from datetime import datetime
 import isodate
 
@@ -26,7 +31,7 @@ def index(request):
 
 
 # SONGS
-def song(request, playlist_id, song_id=None):
+def song(request, playlist_id):
     # new song
     current_list = _get_playlist_or_404(playlist_id)
     if request.method == 'POST':
@@ -132,10 +137,19 @@ def song(request, playlist_id, song_id=None):
         form = SongForm(request.GET)
         if form.is_valid():
             song = _get_song_or_404(form.cleaned_data['id'])
-            j = _serialize_obj(song)
+            j = _format_song(song, is_string=True)
             return HttpResponse(j)
     return Http404("add_song failed")
 
+def all_songs(request, playlist_id):
+    if request.method == 'GET':
+        current_list = _get_playlist_or_404(playlist_id)
+        all = Song.objects.filter(playlist_id=current_list.id).select_related()
+        ar = []
+        for a in all:
+            ar.append(_format_song(a))
+        return HttpResponse(json.dumps(ar))
+    return Http404("all_song failed")
 
 def vote(request, playlist_id):
     current_list = _get_playlist_or_404(playlist_id)
