@@ -15,6 +15,7 @@ def _get_playlist_or_404(playlist_id):
         print("Could not find playlist {0}".format(playlist_id))
         raise Http404
 
+
 def _get_account_or_404(account_id):
     try:
         return Account.objects.get(pk=account_id)
@@ -30,12 +31,14 @@ def _get_song_or_404(song_id):
         print("Could not find song {0}".format(song_id))
         raise Http404
 
+
 def _get_vote_or_404(vote_id):
     try:
         return Vote.objects.get(pk=vote_id)
     except ObjectDoesNotExist:
         print("Could not find vote {0}".format(vote_id))
         raise Http404
+
 
 def _serialize_obj(obj, is_string=True):
     try:
@@ -49,6 +52,7 @@ def _serialize_obj(obj, is_string=True):
         # j = serializers.serialize('json', [j, ])
         j = json.dumps(j)
     return j
+
 
 def _serialize_all_obj(objs, is_string=True):
     try:

@@ -145,6 +145,7 @@ def song(request, playlist_id):
             return HttpResponse(j)
     return Http404("add_song failed")
 
+
 def all_songs(request, playlist_id):
     if request.method == 'GET':
         current_list = _get_playlist_or_404(playlist_id)
@@ -154,6 +155,7 @@ def all_songs(request, playlist_id):
             ar.append(_format_song(a))
         return HttpResponse(json.dumps(ar))
     return Http404("all_song failed")
+
 
 def vote(request, playlist_id):
     current_list = _get_playlist_or_404(playlist_id)
