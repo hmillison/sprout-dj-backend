@@ -230,10 +230,6 @@ def playlist(request, playlist_id):
 
 
 # ACCOUNT
-def new_account(request):
-    return Http404("failed new account")
-
-
 def account(request):
     if request.method == 'POST':
         form = AccountForm(request.POST)
