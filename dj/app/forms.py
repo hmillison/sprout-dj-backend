@@ -21,7 +21,7 @@ class VoteForm(forms.Form):
     song_id = forms.IntegerField(required=True)
     type = forms.CharField(required=True)
     account_id = forms.IntegerField(required=True)
-    on = forms.BooleanField(required=False)
+    on = forms.IntegerField(required=True)
 
 class AccountForm(forms.Form):
     id = forms.IntegerField(required=False)

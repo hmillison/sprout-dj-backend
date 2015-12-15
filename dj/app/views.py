@@ -43,6 +43,8 @@ def song(request, playlist_id):
             #for youtube links
             if 'youtu' in parsedurl.netloc:
                 qs=parse_qs(parsedurl.query)
+
+                #check if it's a shortened link and figure out the id
                 if 'v' in qs:
                     ytid = qs['v'][0]
                     url = 'http://www.youtube.com/watch?v=' + ytid
@@ -52,6 +54,8 @@ def song(request, playlist_id):
                 else:
                     return HttpResponse("This is not a valid Youtube link.")
 
+
+                #pull track info from YT API
                 infourl = 'https://www.googleapis.com/youtube/v3/videos?id=' + ytid + '&key=AIzaSyCrUdVGALPgTv4zguqksg835EK3mRPhpfE&fields=items(id,snippet,contentDetails)&part=snippet,contentDetails'
 
                 trackinfo = requests.get(infourl).json()
@@ -109,7 +113,7 @@ def song(request, playlist_id):
             #check if it already exists on the playlist
             f = Song.objects.filter(url=url,playlist_id=playlist_id).count()
 
-            #if not, do stuff
+            #if not, add to db
             if f == 0:
                 date_added=datetime.utcnow()
                 s = Song(url=url,
@@ -156,11 +160,38 @@ def vote(request, playlist_id):
     if request.method == 'POST':
         form = VoteForm(request.POST)
         if form.is_valid():
-            v = Vote(type=form.cleaned_data['type'],
-                     account_id=form.cleaned_data['account_id'],
-                     on=form.cleaned_data['on'])
-            v.save()
-            j = _serialize_obj(v)
+            type = form.cleaned_data['type']
+            account_id=form.cleaned_data['account_id']
+            on=form.cleaned_data['on']
+            song_id=form.cleaned_data['song_id']
+
+            #check if vote exists
+            v = Vote.objects.filter(account_id=account_id,song_id=song_id)
+            f = v.values()
+
+            #if so, check if on
+            if len(f) > 1:
+                return HttpResponse("You done fucked up somehow.")
+            elif len(f) == 1:
+                if f[0]['type'] <> type or f[0]['on'] <> on:
+                    v.update(on=on,type=type)
+                    j = _serialize_obj(v[0])
+                elif f[0]['on'] == 1 and on==1:
+                    return HttpResponse("You already voted on this track, jerk.")
+                elif f[0]['on'] == 0 and on==0:
+                    return HttpResponse("You already unvoted this track, jerk.")
+            else:
+                #if not exists add
+                v = Vote(type=type,
+                         account_id=account_id,
+                         on=on,
+                         song_id=song_id)
+                v.save()
+                j = _serialize_obj(v)
+
+            #check nope threshold here
+
+            #return row
             return HttpResponse(j)
     if request.method == 'GET':
         form = VoteForm(request.POST)
