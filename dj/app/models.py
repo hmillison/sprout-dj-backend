@@ -16,6 +16,8 @@ class Account(models.Model):
     slack_name = models.CharField(max_length=256, blank=True, null=True)
     avatar_url = models.TextField(blank=True, null=True)
     is_this_john = models.IntegerField(blank=True, null=True)
+    slack_id = models.CharField(max_length=11, blank=True, null=True)
+    slack_token = models.CharField(max_length=256, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -146,7 +148,7 @@ class Playlist(models.Model):
 class Song(models.Model):
     url = models.TextField(blank=True, null=True)
     account_id = models.IntegerField(blank=True, null=True)
-    date_added = models.DateTimeField(blank=True, null=False)
+    date_added = models.DateTimeField()
     playlist_id = models.IntegerField(blank=True, null=True)
     played_on = models.DateTimeField(blank=True, null=True)
     got_noped = models.IntegerField(blank=True, null=True)
@@ -156,6 +158,7 @@ class Song(models.Model):
     artist = models.CharField(max_length=256, blank=True, null=True)
     paused_at = models.IntegerField(blank=True, null=True)
     is_this_john = models.IntegerField(blank=True, null=True)
+    thumbnail = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False
