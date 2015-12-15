@@ -13,9 +13,9 @@ class SongForm(forms.Form):
 
 class PlaylistForm(forms.Form):
     id = forms.IntegerField(required=False)
-    time_start = forms.IntegerField(required=False)
-    time_end = forms.IntegerField(required=False)
     now_playing = forms.IntegerField(required=False)
+    url = forms.CharField(required=False)
+    slack_room_id = forms.CharField(required=False)
 
 class VoteForm(forms.Form):
     song_id = forms.IntegerField(required=True)

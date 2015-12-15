@@ -10,8 +10,7 @@ urlpatterns = [
     url(r'^(?P<playlist_id>[0-9]+)/song/all/$', views.all_songs),
     url(r'^(?P<playlist_id>[0-9]+)/vote/$', views.vote),
     # playlist
-    url(r'^(?P<playlist_id>[0-9]+)/playlist/$', views.playlist),
-    url(r'^new_playlist/$', views.new_playlist),
+    url(r'^playlist/$', views.playlist),
     # account
     url(r'^account/$', views.account),
 ]

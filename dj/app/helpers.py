@@ -59,8 +59,8 @@ def _serialize_all_obj(objs, is_string=True):
         for o in objs:
             tmp = o.__dict__
             tmp.pop('_state', None)
-            if tmp.get('date_time'):
-                tmp['date_time'] = "{0}".format(tmp['date_time'])
+            if tmp.get('date_added'):
+                tmp['date_added'] = "{0}".format(tmp['date_added'])
             j.append(tmp)
     except Exception:
         j = []

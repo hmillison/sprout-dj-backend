@@ -137,7 +137,7 @@ class DjangoSession(models.Model):
 class Playlist(models.Model):
     slack_room_id = models.CharField(max_length=256, blank=True, null=True)
     url = models.CharField(max_length=1024, blank=True, null=True)
-    created = models.DateTimeField(blank=True, null=True)
+    date_added = models.DateTimeField(blank=True, null=True)
     now_playing = models.IntegerField(blank=True, null=True)
 
     class Meta:

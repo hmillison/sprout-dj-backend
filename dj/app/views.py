@@ -205,25 +205,21 @@ def vote(request, playlist_id):
 
 
 # PLAYLIST
-def new_playlist(request):
-    if request.method == 'POST':
-        form = PlaylistForm(request.POST)
-        if form.is_valid():
-            return HttpResponse("new_playlist data {0} for list {1}".format(form.cleaned_data))
-    return Http404("failed new_playlist")
-
-
-def playlist(request, playlist_id):
+def playlist(request):
         # update playlist
-        current_list = _get_playlist_or_404(playlist_id)
         if request.method == 'POST':
             form = PlaylistForm(request.POST)
             if form.is_valid():
-                return HttpResponse("update_playlist data {0} for list {1}".format(form.cleaned_data, playlist_id))
+                p = Playlist(url=form.cleaned_data['url'],
+                             slack_room_id=form.cleaned_data['slack_room_id'],
+                             date_added=datetime.utcnow())
+                p.save()
+                return HttpResponse(_serialize_obj(p))
         # view playlist
         if request.method == 'GET':
             form = PlaylistForm(request.GET)
             if form.is_valid():
+                current_list = _get_playlist_or_404(form.cleaned_data['id'])
                 j = _serialize_obj(current_list)
                 return HttpResponse(j)
         return Http404("failed update playlist")
