@@ -156,6 +156,7 @@ class Song(models.Model):
     artist = models.CharField(max_length=256, blank=True, null=True)
     paused_at = models.IntegerField(blank=True, null=True)
     is_this_john = models.IntegerField(blank=True, null=True)
+    thumbnail = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False
