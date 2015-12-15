@@ -14,7 +14,6 @@ Mock==1.0.1
 stompclient==0.3.2
 boto==2.38
 isodate==0.5.4
-requests==2.1.0
 
 --allow-external pil
 --allow-unverified pil
