@@ -41,6 +41,15 @@ def song(request, playlist_id):
             #check if it's a valid soundcloud or youtube url
             parsedurl = urlparse(form.cleaned_data['url'])
 
+            if not form.cleaned_data.get('account_id'):
+                return HttpResponse("Please use a valid account.",status='401')
+            else:
+                #check for account
+                account_id = form.cleaned_data['account_id']
+                if not _get_account_or_404(account_id):
+                    return HttpResponse("Please use a valid account.",status='401')
+
+
             #for youtube links
             if 'youtu' in parsedurl.netloc:
                 qs=parse_qs(parsedurl.query)
@@ -64,10 +73,10 @@ def song(request, playlist_id):
                 artist = trackinfo['items'][0]['snippet']['channelTitle']
                 uploader = trackinfo['items'][0]['snippet']['channelTitle']
                 title = trackinfo['items'][0]['snippet']['localized']['title']
-                duration = int(round(isodate.parse_duration(trackinfo['items'][0]['contentDetails']['duration']).total_seconds()))
+                duration = int(round(isodate.parse_duration(trackinfo['items'][0]['contentDetails']['duration']).total_seconds()*10))
 
                 #if it's more than 30 minutes, replace with rickroll
-                if duration > 1800:
+                if duration > 18000:
                     url = 'http://www.youtube.com/watch?v=dQw4w9WgXcQ'
 
 
@@ -97,7 +106,7 @@ def song(request, playlist_id):
                     duration = trackinfo['duration']
 
                     #if it's more than 30 minutes, replace with rickroll
-                    if duration > 1800:
+                    if duration > 18000:
                         url = 'http://www.youtube.com/watch?v=dQw4w9WgXcQ'
 
                     #thumbnail
@@ -118,7 +127,7 @@ def song(request, playlist_id):
             if f == 0:
                 date_added=datetime.utcnow()
                 s = Song(url=url,
-                         account_id=form.cleaned_data['account_id'],
+                         account_id=account_id,
                          playlist_id=playlist_id,
                          artist=artist,
                          title=title,
@@ -163,8 +172,16 @@ def vote(request, playlist_id):
     if request.method == 'POST':
         form = VoteForm(request.POST)
         if form.is_valid():
+
+            if not form.cleaned_data.get('account_id'):
+                return HttpResponse("Please use a valid account.",status='401')
+            else:
+                #check for account
+                account_id = form.cleaned_data['account_id']
+                if not _get_account_or_404(account_id):
+                    return HttpResponse("Please use a valid account.",status='401')
+
             type = form.cleaned_data['type']
-            account_id=form.cleaned_data['account_id']
             on=form.cleaned_data['on']
             song_id=form.cleaned_data['song_id']
 
@@ -184,11 +201,14 @@ def vote(request, playlist_id):
                 elif f[0]['on'] == 0 and on==0:
                     return HttpResponseBadRequest("You already unvoted this track, jerk.")
             else:
+                date_added=datetime.utcnow()
                 #if not exists add
                 v = Vote(type=type,
                          account_id=account_id,
                          on=on,
-                         song_id=song_id)
+                         song_id=song_id,
+                         date_added=date_added
+                         )
                 v.save()
                 j = _serialize_obj(v)
 
