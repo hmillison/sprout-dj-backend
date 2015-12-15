@@ -229,6 +229,10 @@ def playlist(request, playlist_id):
 
 # ACCOUNT
 def new_account(request):
+    return Http404("failed new account")
+
+
+def account(request):
     if request.method == 'POST':
         form = AccountForm(request.POST)
         if form.is_valid():
@@ -241,18 +245,15 @@ def new_account(request):
             a.save()
             j = _serialize_obj(a)
             return HttpResponse(j)
-    return Http404("failed new account")
-
-
-def account(request, account_id):
-    current_account = _get_account_or_404(account_id)
     if request.method == 'PUT':
         form = AccountForm(request.PUT)
         if form.is_valid():
+            current_account = _get_account_or_404(form.cleaned_data['id'])
             return HttpResponse("update_account data {0} for account {1}".format(form.cleaned_data, account_id))
     if request.method == 'GET':
         form = AccountForm(request.GET)
         if form.is_valid():
+            current_account = _get_account_or_404(form.cleaned_data['id'])
             j = _serialize_obj(current_account)
             return HttpResponse(j)
     return Http404("failed update account")

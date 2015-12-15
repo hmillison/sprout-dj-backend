@@ -13,6 +13,5 @@ urlpatterns = [
     url(r'^(?P<playlist_id>[0-9]+)/playlist/$', views.playlist),
     url(r'^new_playlist/$', views.new_playlist),
     # account
-    url(r'^new_account/$', views.new_account),
-    url(r'^(?P<account_id>[0-9]+)/account/$', views.account),
+    url(r'^account/$', views.account),
 ]

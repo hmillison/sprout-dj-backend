@@ -46,7 +46,8 @@ def _serialize_obj(obj, is_string=True):
     except Exception:
         j = {}
     if is_string:
-        j = serializers.serialize('json', [j, ])
+        # j = serializers.serialize('json', [j, ])
+        j = json.dumps(j)
     return j
 
 def _serialize_all_obj(objs, is_string=True):
@@ -61,7 +62,8 @@ def _serialize_all_obj(objs, is_string=True):
     except Exception:
         j = []
     if is_string:
-        j = serializers.serialize('json', j)
+        # j = serializers.serialize('json', j)
+        j = json.dump(j)
     return j
 
 
