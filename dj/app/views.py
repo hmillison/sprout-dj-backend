@@ -72,10 +72,10 @@ def song(request, playlist_id):
                 artist = trackinfo['items'][0]['snippet']['channelTitle']
                 uploader = trackinfo['items'][0]['snippet']['channelTitle']
                 title = trackinfo['items'][0]['snippet']['localized']['title']
-                duration = int(round(isodate.parse_duration(trackinfo['items'][0]['contentDetails']['duration']).total_seconds()))
+                duration = int(round(isodate.parse_duration(trackinfo['items'][0]['contentDetails']['duration']).total_seconds()*10))
 
                 #if it's more than 30 minutes, replace with rickroll
-                if duration > 1800:
+                if duration > 18000:
                     url = 'http://www.youtube.com/watch?v=dQw4w9WgXcQ'
 
 
@@ -105,7 +105,7 @@ def song(request, playlist_id):
                     duration = trackinfo['duration']
 
                     #if it's more than 30 minutes, replace with rickroll
-                    if duration > 1800:
+                    if duration > 18000:
                         url = 'http://www.youtube.com/watch?v=dQw4w9WgXcQ'
 
                     #thumbnail
