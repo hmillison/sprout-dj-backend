@@ -26,5 +26,7 @@ class VoteForm(forms.Form):
 class AccountForm(forms.Form):
     id = forms.IntegerField(required=False)
     slack_name = forms.CharField(required=False)
-    url_to_jpeg = forms.CharField(required=False)
+    avatar_url = forms.CharField(required=False)
     is_this_john = forms.BooleanField(required=False)
+    slack_id = forms.CharField(required=False)
+    slack_token = forms.CharField(required=False)

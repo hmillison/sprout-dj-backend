@@ -4,13 +4,14 @@ from forms import SongForm
 from forms import PlaylistForm
 from forms import VoteForm
 from forms import AccountForm
-from models import Song
 from models import Account
+from models import Song
+from models import Vote
 from models import Playlist
 from helpers import _get_account_or_404
 from helpers import _get_playlist_or_404
 from helpers import _get_song_or_404
-from helpers import _get_account_or_404
+from helpers import _get_vote_or_404
 from helpers import _serialize_obj
 from urlparse import urlparse,parse_qs
 import soundcloud
@@ -141,7 +142,18 @@ def vote(request, playlist_id):
     if request.method == 'POST':
         form = VoteForm(request.POST)
         if form.is_valid():
-            return HttpResponse("vote data {0} for list {1}".format(form.cleaned_data, playlist_id))
+            v = Vote(type=form.cleaned_data['type'],
+                     account_id=form.cleaned_data['account_id'],
+                     on=form.cleaned_data['on'])
+            v.save()
+            j = _serialize_obj(v)
+            return HttpResponse(j)
+    if request.method == 'GET':
+        form = VoteForm(request.POST)
+        if form.is_valid():
+            v = _get_vote_or_404(form.cleaned_data['id'])
+            j = _serialize_obj(v)
+            return HttpResponse(j)
     return Http404("must use post")
 
 
@@ -175,14 +187,22 @@ def new_account(request):
     if request.method == 'POST':
         form = AccountForm(request.POST)
         if form.is_valid():
-            return HttpResponse("new_account data {0}".format(form.cleaned_data))
+            a = Account(slack_name=form.cleaned_data['slack_name'],
+                        avatar_url=form.cleaned_data['avatar_url'],
+                        is_this_john=form.cleaned_data['is_this_john'],
+                        slack_id=form.cleaned_data['slack_id'],
+                        slack_token=form.cleaned_data['slack_tocken']
+                        )
+            a.save()
+            j = _serialize_obj(a)
+            return HttpResponse(j)
     return Http404("failed new account")
 
 
 def account(request, account_id):
     current_account = _get_account_or_404(account_id)
-    if request.method == 'POST':
-        form = AccountForm(request.POST)
+    if request.method == 'PUT':
+        form = AccountForm(request.PUT)
         if form.is_valid():
             return HttpResponse("update_account data {0} for account {1}".format(form.cleaned_data, account_id))
     if request.method == 'GET':

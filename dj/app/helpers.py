@@ -4,6 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from models import Song
 from models import Account
 from models import Playlist
+from models import Vote
 
 
 def _get_playlist_or_404(playlist_id):
@@ -26,6 +27,13 @@ def _get_song_or_404(song_id):
         return Song.objects.get(pk=song_id)
     except ObjectDoesNotExist:
         print("Could not find song {0}".format(song_id))
+        raise Http404
+
+def _get_vote_or_404(vote_id):
+    try:
+        return Vote.objects.get(pk=vote_id)
+    except ObjectDoesNotExist:
+        print("Could not find vote {0}".format(vote_id))
         raise Http404
 
 def _serialize_obj(obj):
