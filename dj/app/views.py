@@ -191,7 +191,7 @@ def new_account(request):
                         avatar_url=form.cleaned_data['avatar_url'],
                         is_this_john=form.cleaned_data['is_this_john'],
                         slack_id=form.cleaned_data['slack_id'],
-                        slack_token=form.cleaned_data['slack_tocken']
+                        slack_token=form.cleaned_data['slack_token']
                         )
             a.save()
             j = _serialize_obj(a)
