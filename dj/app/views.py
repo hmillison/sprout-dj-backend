@@ -40,16 +40,13 @@ def song(request, playlist_id):
             #check if it's a valid soundcloud or youtube url
             parsedurl = urlparse(form.cleaned_data['url'])
 
-            if 'account_id' not in form.cleaned_data or form.cleaned_data['account_id'] in (None, ''):
-                return HttpResponse("Please use a valid account.")
+            if not form.cleaned_data.get('account_id'):
+                return HttpResponse("Please use a valid account.",status='401')
             else:
                 #check for account
-                a = Account.objects.filter(id=form.cleaned_data['account_id']).count()
-
-                if a == 1:
-                    account_id = form.cleaned_data['account_id']
-                else:
-                    return HttpResponse("Please use a valid account.")
+                account_id = form.cleaned_data['account_id']
+                if not _get_account_or_404(account_id):
+                    return HttpResponse("Please use a valid account.",status='401')
 
 
             #for youtube links
@@ -172,8 +169,16 @@ def vote(request, playlist_id):
     if request.method == 'POST':
         form = VoteForm(request.POST)
         if form.is_valid():
+
+            if not form.cleaned_data.get('account_id'):
+                return HttpResponse("Please use a valid account.",status='401')
+            else:
+                #check for account
+                account_id = form.cleaned_data['account_id']
+                if not _get_account_or_404(account_id):
+                    return HttpResponse("Please use a valid account.",status='401')
+
             type = form.cleaned_data['type']
-            account_id=form.cleaned_data['account_id']
             on=form.cleaned_data['on']
             song_id=form.cleaned_data['song_id']
 
