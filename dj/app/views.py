@@ -269,7 +269,7 @@ def account(request):
         form = AccountForm(request.PUT)
         if form.is_valid():
             current_account = _get_account_or_404(form.cleaned_data['id'])
-            return HttpResponse("update_account data {0} for account {1}".format(form.cleaned_data, account_id))
+            return HttpResponse("update_account data {0} for account {1}".format(form.cleaned_data, form.cleaned_data['id']))
     if request.method == 'GET':
         form = AccountForm(request.GET)
         if form.is_valid():
