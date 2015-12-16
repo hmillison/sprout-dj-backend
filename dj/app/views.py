@@ -148,11 +148,6 @@ def song(request, playlist_id):
             else:
                 logger.error("This is on the playlist already, stupid. request {0}".format(form.cleaned_data))
                 return HttpResponseBadRequest("This is on the playlist already, stupid.")
-    # update song
-    if request.method == 'PUT':
-        form = SongForm(request.PUT)
-        if form.is_valid():
-            return HttpResponse("update_song data {0} for list {1}".format(form.cleaned_data, playlist_id))
     # view song
     if request.method == 'GET':
         form = SongForm(request.GET)
@@ -161,6 +156,20 @@ def song(request, playlist_id):
             j = _format_song(song, is_string=True)
             return HttpResponse(j)
     return Http404("add_song failed")
+
+
+def song_update(request, playlist_id):
+    # update song
+    current_list = _get_playlist_or_404(playlist_id)
+    if request.method == 'POST':
+        form = SongForm(request.POST)
+        if form.is_valid():
+            current_song = _get_song_or_404(form.cleaned_data['id'])
+            if current_song.playlist_id != current_list.id:
+                logger.error("The song_update {0} is not part of playlist {1}, request {2}".format(song.id, current_list.id, form.cleaned_data))
+                return HttpResponseBadRequest("this song is not for the current playlist")
+            _update_object(current_song, form.cleaned_data)
+            return HttpResponse("update_song data")
 
 
 def all_songs(request, playlist_id):
