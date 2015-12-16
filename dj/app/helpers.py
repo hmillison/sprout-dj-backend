@@ -81,6 +81,11 @@ def _format_song(song, is_string=False):
     format = {}
     format['song'] = _serialize_obj(song, is_string=False)
     format['votes'] = _serialize_all_obj(votes, is_string=False)
+    try:
+        account = _get_account_or_404(song.account_id)
+        format['account'] = _serialize_obj(account, is_string=False)
+    except Http404:
+        format['account'] = ""
     if is_string:
         format = json.dumps(format)
     return format
