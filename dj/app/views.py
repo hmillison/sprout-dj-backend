@@ -304,10 +304,6 @@ def account_update(request):
         form = AccountForm(request.POST)
         if form.is_valid():
             current_account = _get_account_or_404(form.cleaned_data['id'])
-            # for key in current_account.__dict__:
-            #     if form.cleaned_data.get(key):
-            #         setattr(current_account, key, form.cleaned_data[key])
-            # current_account.save()
             _update_object(current_account, form.cleaned_data)
-            return HttpResponse("update_account data {0}".format(j))
+            return HttpResponse("update_account data")
     return Http404("failed update account")
