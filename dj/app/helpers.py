@@ -90,4 +90,4 @@ def _update_object(cur_object, cleaned_data):
         if cleaned_data.get(key):
             setattr(cur_object, key, cleaned_data[key])
     cur_object.save()
-    logger.info("Updated test {0} cleaned_data {1} new data {2}".format(type(cur_object), cleaned_data, _serialize_obj(cur_object)))
+    logger.info("Updated object {0} cleaned_data {1} new data {2}".format(type(cur_object), cleaned_data, _serialize_obj(cur_object)))

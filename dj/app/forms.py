@@ -10,6 +10,7 @@ class SongForm(forms.Form):
     got_noped = forms.IntegerField(required=False)
     time_passed = forms.IntegerField(required=False)
     is_this_john = forms.BooleanField(required=False)
+    played_on = forms.DateTimeField(required=False)
 
 class PlaylistForm(forms.Form):
     id = forms.IntegerField(required=False)
