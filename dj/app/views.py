@@ -289,16 +289,20 @@ def account(request):
     if request.method == 'POST':
         form = AccountForm(request.POST)
         if form.is_valid():
-            a = Account(slack_name=form.cleaned_data['slack_name'],
-                        avatar_url=form.cleaned_data['avatar_url'],
-                        is_this_john=form.cleaned_data['is_this_john'],
-                        slack_id=form.cleaned_data['slack_id'],
-                        slack_token=form.cleaned_data['slack_token']
-                        )
-            a.save()
-            j = _serialize_obj(a)
-            logger.info("New account {0}".format(j))
-            return HttpResponse(j)
+            account = Account.objects.filter(slack_id=form.cleaned_data['slack_id'])
+            if len(account) > 0:
+                _update_object(account[0], form.cleaned_data)
+            else:
+                account = Account(slack_name=form.cleaned_data['slack_name'],
+                            avatar_url=form.cleaned_data['avatar_url'],
+                            is_this_john=form.cleaned_data['is_this_john'],
+                            slack_id=form.cleaned_data['slack_id'],
+                            slack_token=form.cleaned_data['slack_token']
+                            )
+                account.save()
+                j = _serialize_obj(account)
+                logger.info("New account {0}".format(j))
+            return HttpResponse()
     if request.method == 'GET':
         form = AccountForm(request.GET)
         if form.is_valid():
