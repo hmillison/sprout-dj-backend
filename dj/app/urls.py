@@ -14,4 +14,5 @@ urlpatterns = [
     url(r'^playlist/update/$', views.playlist_update),
     # account
     url(r'^account/$', views.account),
+    url(r'^account/update/$', views.account_update),
 ]

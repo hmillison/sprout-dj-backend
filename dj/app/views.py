@@ -17,6 +17,7 @@ from helpers import _get_vote_or_404
 from helpers import _serialize_obj
 from helpers import _serialize_all_obj
 from helpers import _format_song
+from helpers import _update_object
 from urlparse import urlparse
 from urlparse import parse_qs
 import soundcloud
@@ -248,7 +249,6 @@ def playlist(request):
                 j = _serialize_obj(p)
                 logger.info("Added playlist {0}".format(j))
                 return HttpResponse(j)
-        # update playlist
         # view playlist
         if request.method == 'GET':
             form = PlaylistForm(request.GET)
@@ -271,11 +271,8 @@ def playlist_update(request):
             if song.playlist_id != current_list.id:
                 logger.error("The song {0} is not part of playlist {1}, request {2}".format(song.id, current_list.id, form.cleaned_data))
                 return HttpResponseBadRequest("this song is not for the current playlist")
-            current_list.now_playing = song.id
-            current_list.save()
-            j = _serialize_obj(current_list)
-            logger.info("Updated playlist {0}".format(j))
-            return HttpResponse(j)
+            _update_object(current_list, form.cleaned_data)
+            return HttpResponse("updated playlist")
 
 
 # ACCOUNT
@@ -293,15 +290,24 @@ def account(request):
             j = _serialize_obj(a)
             logger.info("New account {0}".format(j))
             return HttpResponse(j)
-    if request.method == 'PUT':
-        form = AccountForm(request.PUT)
-        if form.is_valid():
-            current_account = _get_account_or_404(form.cleaned_data['id'])
-            return HttpResponse("update_account data {0} for account {1}".format(form.cleaned_data, form.cleaned_data['id']))
     if request.method == 'GET':
         form = AccountForm(request.GET)
         if form.is_valid():
             current_account = _get_account_or_404(form.cleaned_data['id'])
             j = _serialize_obj(current_account)
             return HttpResponse(j)
+    return Http404("failed account")
+
+
+def account_update(request):
+    if request.method == 'POST':
+        form = AccountForm(request.POST)
+        if form.is_valid():
+            current_account = _get_account_or_404(form.cleaned_data['id'])
+            # for key in current_account.__dict__:
+            #     if form.cleaned_data.get(key):
+            #         setattr(current_account, key, form.cleaned_data[key])
+            # current_account.save()
+            _update_object(current_account, form.cleaned_data)
+            return HttpResponse("update_account data {0}".format(j))
     return Http404("failed update account")

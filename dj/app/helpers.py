@@ -82,3 +82,12 @@ def _format_song(song, is_string=False):
     if is_string:
         format = json.dumps(format)
     return format
+
+def _update_object(cur_object, cleaned_data):
+    for key in cur_object.__dict__:
+        if key == 'id':
+            continue
+        if cleaned_data.get(key):
+            setattr(cur_object, key, cleaned_data[key])
+    cur_object.save()
+    logger.info("Updated test {0} {1}".format(type(cur_object), _serialize_obj(cur_object)))
