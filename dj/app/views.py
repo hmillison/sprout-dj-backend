@@ -29,6 +29,7 @@ import isodate
 import logging
 
 logger = logging.getLogger(__name__)
+NOPED_THRESHOLD = 3
 
 
 def index(request):
@@ -232,7 +233,12 @@ def vote(request, playlist_id):
                 j = _serialize_obj(v)
                 logger.info("Added new vote {0}".format(j))
 
-            #check nope threshold here
+                nope_count = Vote.objects.filter(song_id=song_id, type='nope').count()
+                if nope_count >= NOPED_THRESHOLD:
+                    song = Song.objects.get(id=song_id)
+                    song.got_noped = 1
+                    song.save()
+                    logger.info("Song {0} got noped!".format(song_id))
 
             #return row
             return HttpResponse(j)
