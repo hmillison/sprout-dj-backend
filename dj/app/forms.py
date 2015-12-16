@@ -1,5 +1,5 @@
 from django import forms
-
+from models import VOTE_CHOICES
 
 class SongForm(forms.Form):
     id = forms.IntegerField(required=False)
@@ -20,7 +20,7 @@ class PlaylistForm(forms.Form):
 
 class VoteForm(forms.Form):
     song_id = forms.IntegerField(required=True)
-    type = forms.CharField(required=True)
+    type = forms.ChoiceField(required=True, choices=VOTE_CHOICES)
     account_id = forms.IntegerField(required=True)
     on = forms.IntegerField(required=True)
 

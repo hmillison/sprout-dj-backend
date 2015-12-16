@@ -164,10 +164,14 @@ class Song(models.Model):
         managed = False
         db_table = 'song'
 
+VOTE_CHOICES = (
+    ('up', 'up'),
+    ('nope', 'nope')
+)
 
 class Vote(models.Model):
     song_id = models.IntegerField(blank=True, null=True)
-    type = models.CharField(max_length=32, blank=True, null=True)
+    type = models.CharField(max_length=32, blank=True, null=True, choices=VOTE_CHOICES)
     date_added = models.DateTimeField(blank=True, null=True)
     account_id = models.IntegerField(blank=True, null=True)
     on = models.IntegerField()
