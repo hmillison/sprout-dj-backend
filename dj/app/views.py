@@ -25,6 +25,9 @@ import requests
 import json
 from datetime import datetime
 import isodate
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def index(request):
@@ -42,13 +45,11 @@ def song(request, playlist_id):
             parsedurl = urlparse(form.cleaned_data['url'])
 
             if not form.cleaned_data.get('account_id'):
-                return HttpResponse("Please use a valid account.",status='401')
+                logger.error("No account passed in for new song")
+                return HttpResponseBadRequest("Please use a valid account.")
             else:
                 #check for account
-                account_id = form.cleaned_data['account_id']
-                if not _get_account_or_404(account_id):
-                    return HttpResponse("Please use a valid account.",status='401')
-
+                account = _get_account_or_404(form.cleaned_data['account_id'])
 
             #for youtube links
             if 'youtu' in parsedurl.netloc:
@@ -62,7 +63,8 @@ def song(request, playlist_id):
                     ytid = parsedurl.path[1:]
                     url = 'http://www.youtube.com/watch?v=' + ytid
                 else:
-                    return HttpResponse("This is not a valid Youtube link.")
+                    logger.error("Not a valid youtube link, request {0}".format(form.cleaned_data))
+                    return HttpResponseBadRequest("This is not a valid Youtube link.")
 
 
                 #pull track info from YT API
@@ -115,10 +117,12 @@ def song(request, playlist_id):
                     else:
                         thumbnail = trackinfo['user']['avatar_url']
                 else:
-                    return HttpResponse("This is not a Soundcloud link.")
+                    logger.error("Not a valid soundcloud link, request {0}".format(form.cleaned_data))
+                    return HttpResponseBadRequest("This is not a Soundcloud link.")
 
             else:
-                return HttpResponse("This is not a valid Youtube or Soundcloud link.")
+                logger.error("This is not a valid Youtube or Soundcloud link. request {0}".format(form.cleaned_data))
+                return HttpResponseBadRequest("This is not a valid Youtube or Soundcloud link.")
 
             #check if it already exists on the playlist
             f = Song.objects.filter(url=url,playlist_id=playlist_id).count()
@@ -127,8 +131,8 @@ def song(request, playlist_id):
             if f == 0:
                 date_added=datetime.utcnow()
                 s = Song(url=url,
-                         account_id=account_id,
-                         playlist_id=playlist_id,
+                         account_id=account.id,
+                         playlist_id=current_list.id,
                          artist=artist,
                          title=title,
                          uploader=uploader,
@@ -137,9 +141,11 @@ def song(request, playlist_id):
                          thumbnail=thumbnail
                          )
                 s.save()
-
-                return HttpResponse(_serialize_obj(s))
+                j = _serialize_obj(s)
+                logger.info("Added new song {0}".format(j))
+                return HttpResponse(j)
             else:
+                logger.error("This is on the playlist already, stupid. request {0}".format(form.cleaned_data))
                 return HttpResponseBadRequest("This is on the playlist already, stupid.")
     # update song
     if request.method == 'PUT':
@@ -191,14 +197,17 @@ def vote(request, playlist_id):
 
             #if so, check if on
             if len(f) > 1:
+                logger.error("You done fucked up, request {0}".format(form.cleaned_data))
                 return HttpResponseBadRequest("You done fucked up somehow.")
             elif len(f) == 1:
                 if f[0]['type'] <> type or f[0]['on'] <> on:
                     v.update(on=on,type=type)
                     j = _serialize_obj(v[0])
                 elif f[0]['on'] == 1 and on==1:
+                    logger.error("You already voted on this track, jerk, request {0}".format(form.cleaned_data))
                     return HttpResponseBadRequest("You already voted on this track, jerk.")
                 elif f[0]['on'] == 0 and on==0:
+                    logger.error("You already unvoted on this track, jerk, request {0}".format(form.cleaned_data))
                     return HttpResponseBadRequest("You already unvoted this track, jerk.")
             else:
                 date_added=datetime.utcnow()
@@ -211,6 +220,7 @@ def vote(request, playlist_id):
                          )
                 v.save()
                 j = _serialize_obj(v)
+                logger.info("Added new vote {0}".format(j))
 
             #check nope threshold here
 
@@ -235,7 +245,9 @@ def playlist(request):
                              slack_room_id=form.cleaned_data['slack_room_id'],
                              date_added=datetime.utcnow())
                 p.save()
-                return HttpResponse(_serialize_obj(p))
+                j = _serialize_obj(p)
+                logger.info("Added playlist {0}".format(j))
+                return HttpResponse(j)
         # update playlist
         # view playlist
         if request.method == 'GET':
@@ -253,13 +265,17 @@ def playlist_update(request):
         if form.is_valid():
             current_list = _get_playlist_or_404(form.cleaned_data['id'])
             if not form.cleaned_data.get('now_playing'):
+                logger.error("No song present to add, request {0}".format(form.cleaned_data))
                 return HttpResponseBadRequest("cannot update playist without song")
             song = _get_song_or_404(form.cleaned_data['now_playing'])
             if song.playlist_id != current_list.id:
+                logger.error("The song {0} is not part of playlist {1}, request {2}".format(song.id, current_list.id, form.cleaned_data))
                 return HttpResponseBadRequest("this song is not for the current playlist")
             current_list.now_playing = song.id
             current_list.save()
-            return HttpResponse(_serialize_obj(current_list))
+            j = _serialize_obj(current_list)
+            logger.info("Updated playlist {0}".format(j))
+            return HttpResponse(j)
 
 
 # ACCOUNT
@@ -275,6 +291,7 @@ def account(request):
                         )
             a.save()
             j = _serialize_obj(a)
+            logger.info("New account {0}".format(j))
             return HttpResponse(j)
     if request.method == 'PUT':
         form = AccountForm(request.PUT)
