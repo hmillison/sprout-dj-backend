@@ -49,6 +49,8 @@ def _serialize_obj(obj, is_string=True):
         j.pop('_state', None)
         if j.get('date_added'):
             j['date_added'] = "{0}".format(j['date_added'])
+        if j.get('played_on'):
+            j['played_on'] = "{0}".format(j['played_on'])
     except Exception:
         logger.error("Could not serialize object")
         j = {}
