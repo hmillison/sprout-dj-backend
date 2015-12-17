@@ -139,6 +139,7 @@ class Playlist(models.Model):
     url = models.CharField(max_length=1024, blank=True, null=True)
     date_added = models.DateTimeField(blank=True, null=True)
     now_playing = models.IntegerField(blank=True, null=True)
+    session_id = models.CharField(max_length=128, blank=True, null=True)
 
     class Meta:
         managed = False
