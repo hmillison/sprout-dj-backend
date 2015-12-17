@@ -298,6 +298,7 @@ def account(request):
             account = Account.objects.filter(slack_id=form.cleaned_data['slack_id'])
             if len(account) > 0:
                 _update_object(account[0], form.cleaned_data)
+                j = _serialize_obj(account[0])
             else:
                 account = Account(slack_name=form.cleaned_data['slack_name'],
                             avatar_url=form.cleaned_data['avatar_url'],
@@ -308,7 +309,7 @@ def account(request):
                 account.save()
                 j = _serialize_obj(account)
                 logger.info("New account {0}".format(j))
-            return HttpResponse()
+            return HttpResponse(j)
     if request.method == 'GET':
         form = AccountForm(request.GET)
         if form.is_valid():
